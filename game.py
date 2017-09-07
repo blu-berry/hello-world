@@ -12,6 +12,7 @@ gameDisplay = pygame.display.set_mode((width,height))
 pygame.display.set_caption("Display")
 clock = pygame.time.Clock()
 victoryImg = pygame.image.load("win.png")
+menuImg = pygame.image.load("menu.png")
 
 exit = False
 
@@ -19,10 +20,34 @@ exit = False
 x = 512
 y = 758
 
+
+# main menu
+width_values_list = [365, 340, 212, 145]
+picker_y_chords_list = [180, 305, 427, 552]
+picker_x_chords_list = [330, 345, 400, 430]
+picker_pos = 0
+picker_x = picker_x_chords_list[picker_pos]
+picker_y = picker_y_chords_list[picker_pos]
+picker_width = width_values_list[picker_pos]
+picker_height = 55
+
+
+def main_menu():
+    gameDisplay.fill((42, 44, 48))
+    gameDisplay.blit(menuImg, (312, 84))
+    pygame.draw.rect(gameDisplay, (255, 255, 255), (picker_x, picker_y, picker_width, picker_height), 2)
+
+
+
 # basic level
 def map():
     gameDisplay.fill((42, 44, 48))
-    pygame.draw.rect(gameDisplay, (255, 0, 0), (492, 0, 40, 40), 0)
+    pygame.draw.rect(gameDisplay, (255, 255, 255), (492, 0, 40, 40), 3)
+    pygame.draw.circle(gameDisplay, (40, 119, 252), (x, y), 10, 5)
+    pygame.draw.circle(gameDisplay, (255, 255, 255), (bullet1_x, bullet1_y), 2, 0)
+    pygame.draw.circle(gameDisplay, (255, 255, 255), (bullet2_x, bullet2_y), 2, 0)
+    pygame.draw.circle(gameDisplay, (255, 255, 255), (bullet3_x, bullet3_y), 2, 0)
+    pygame.draw.circle(gameDisplay, (255, 255, 255), (bullet4_x, bullet4_y), 2, 0)
 
 # victory screen
 def win():
@@ -30,7 +55,7 @@ def win():
     gameDisplay.blit(victoryImg, (362, 134))
 
 # maps list and map counter
-maps_list = [map, win]
+maps_list = [main_menu, map, win]
 map_num = 0
 
 # save and load system
@@ -63,14 +88,7 @@ x_axis = [bullet1_x, bullet2_x, bullet3_x, bullet4_x]
 y_axis = [bullet1_y, bullet2_y, bullet3_y, bullet4_y]
 
 
-map()
-
-# drawing of all basic objects
-pygame.draw.circle(gameDisplay, (40, 119, 252), (x, y), 10, 5)
-pygame.draw.circle(gameDisplay, (255, 255, 255), (bullet1_x, bullet1_y), 2, 0)
-pygame.draw.circle(gameDisplay, (255, 255, 255), (bullet2_x, bullet2_y), 2, 0)
-pygame.draw.circle(gameDisplay, (255, 255, 255), (bullet3_x, bullet3_y), 2, 0)
-pygame.draw.circle(gameDisplay, (255, 255, 255), (bullet4_x, bullet4_y), 2, 0)
+maps_list[map_num]()
 
 pygame.key.set_repeat(10, 10)
 
@@ -104,17 +122,22 @@ while not exit:
             maps_list[map_num]()
             if y < 10:
                 y = 10
+            picker_pos -= 1
+            if picker_pos < 0:
+                picker_pos = 0
         if event.type == pygame.KEYDOWN and event.key == pygame.K_DOWN:
             y += 2
             maps_list[map_num]()
             if y > (height - 10):
                 y = (height - 10)
+            picker_pos += 1
+            if picker_pos > 3:
+                picker_pos = 3
 
 
 # map change and finish logic
     maps_list[map_num]()
 
-    pygame.draw.circle(gameDisplay, (40, 119, 252), (x, y), 10, 5)
 
     if y < 40:
         if x < 532 and x > 492:
@@ -125,7 +148,7 @@ while not exit:
             y = 758
 
     # bullets logic
-    if map_num == 0:
+    if map_num == 1:
         # bullet1
         pygame.draw.circle(gameDisplay, (255, 255, 255), (bullet1_x, bullet1_y), 2, 0)
         bullet1_x -= 5
